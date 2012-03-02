@@ -88,6 +88,7 @@ public slots:
     void release();
 
     QVariant evaluate(const QString &code);
+	QVariant evaluateInAllFrames(const QString &code);
     bool render(const QString &fileName);
     bool injectJs(const QString &jsFilePath);
     void _appendScriptElement(const QString &scriptUrl);
@@ -105,6 +106,7 @@ signals:
 
 private slots:
     void finish(bool ok);
+	QVariant evaluateOnFrame(QWebFrame *&frame, const QString &code);
 
 private:
     CustomPage *m_webPage;

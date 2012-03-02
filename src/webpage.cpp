@@ -283,9 +283,42 @@ QVariantMap WebPage::paperSize() const
 
 QVariant WebPage::evaluate(const QString &code)
 {
+
     QString function = "(" + code + ")()";
     return m_mainFrame->evaluateJavaScript(function);
 }
+
+QVariant WebPage::evaluateInAllFrames(const QString &code)
+{
+	Utils::injectJsInFrame("jquery.min.js", m_libraryPath, m_mainFrame);
+	return evaluateOnFrame(m_mainFrame, code);
+}
+
+QVariant WebPage::evaluateOnFrame(QWebFrame *&frame, const QString &code)
+{
+	QString aggregation = "{\"frame\":";
+	QString function = "(" + code + ")()";
+	QString javascript = frame->evaluateJavaScript(function).toString();
+	aggregation.append(javascript);
+	aggregation.append(", \"childFrames\":[");
+	QList<QWebFrame *>::iterator i;
+	QList<QWebFrame *> frames = frame->childFrames();
+	int count = 0;
+	for(i = frames.begin(); i != frames.end(); i++){
+		Utils::injectJsInFrame("jquery.min.js", m_libraryPath, *i);
+		QString javascript = evaluateOnFrame(*i, code).toString();
+		aggregation.append(javascript);
+		if(count < (frames.size() - 1)){
+			aggregation.append(",");
+		}
+		count++;	
+	
+
+	}
+	aggregation.append("]}");
+	return aggregation;
+}
+
 
 void WebPage::emitAlert(const QString &msg)
 {
