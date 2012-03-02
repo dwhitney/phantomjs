@@ -296,9 +296,10 @@ QVariant WebPage::evaluateInAllFrames(const QString &code)
 
 QVariant WebPage::evaluateOnFrame(QWebFrame *&frame, const QString &code)
 {
-	QString aggregation = "{\"frame\":";
+	QString aggregation = "[";
 	QString function = "(" + code + ")()";
 	QString javascript = frame->evaluateJavaScript(function).toString();
+	javascript.remove((javascript.size() - 1), 1);
 	aggregation.append(javascript);
 	aggregation.append(", \"childFrames\":[");
 	QList<QWebFrame *>::iterator i;
@@ -312,10 +313,8 @@ QVariant WebPage::evaluateOnFrame(QWebFrame *&frame, const QString &code)
 			aggregation.append(",");
 		}
 		count++;	
-	
-
 	}
-	aggregation.append("]}");
+	aggregation.append("]}]");
 	return aggregation;
 }
 
