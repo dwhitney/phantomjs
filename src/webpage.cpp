@@ -290,7 +290,7 @@ QVariant WebPage::evaluate(const QString &code)
 
 QVariant WebPage::evaluateInAllFrames(const QString &code)
 {
-	Utils::injectJsInFrame("jquery.min.js", m_libraryPath, m_mainFrame);
+	Utils::injectJsInFrame("/Users/hydrogen/development/phantomjs/jquery.min.js", m_libraryPath, m_mainFrame);
 	return evaluateOnFrame(m_mainFrame, code);
 }
 
@@ -306,7 +306,7 @@ QVariant WebPage::evaluateOnFrame(QWebFrame *&frame, const QString &code)
 	QList<QWebFrame *> frames = frame->childFrames();
 	int count = 0;
 	for(i = frames.begin(); i != frames.end(); i++){
-		Utils::injectJsInFrame("jquery.min.js", m_libraryPath, *i);
+		Utils::injectJsInFrame("/Users/hydrogen/development/phantomjs/jquery.min.js", m_libraryPath, *i);
 		QString javascript = evaluateOnFrame(*i, code).toString();
 		aggregation.append(javascript);
 		if(count < (frames.size() - 1)){
